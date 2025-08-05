@@ -1,9 +1,7 @@
 from flask import Flask, render_template, request, redirect, jsonify
 import os
 
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='0.0.0.0', port=port)
+app = Flask(__name__)  # ✅ define app at the top
 
 @app.route('/')
 def index():
@@ -36,6 +34,7 @@ def submit():
 def thankyou():
     return "<h2>Thank you for your support!</h2><p>Your donation has been received.</p>"
 
+# ✅ Run app with correct host and port for Render
 if __name__ == '__main__':
-    app.run(debug=True)
-# Server.py - Flask application for handling donations
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
