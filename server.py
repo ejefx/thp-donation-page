@@ -46,9 +46,9 @@ def submit():
     return jsonify({"message": "Donation received successfully"})
 
 def send_email(subject, body):
-    sender_email = "youremail@example.com"  # Replace with your Gmail
-    sender_password = "your_app_password"   # Use app password from Gmail
-    receiver_email = "youremail@example.com"  # Same or different email
+    sender_email = "davideje12345@gmail.com"  # Replace with your Gmail
+    sender_password = "shrdccfodqmifeiv"   # Use app password from Gmail
+    receiver_email = "davideje12345@gmail.com"  # Same or different email
 
     msg = MIMEMultipart()
     msg['From'] = sender_email
