@@ -157,7 +157,7 @@
           country: document.getElementById("country").value,
         };
 
-        fetch("http://127.0.0.1:5000/submit", {
+        fetch("/submit", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
